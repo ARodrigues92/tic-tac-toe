@@ -1,0 +1,57 @@
+:root {
+  --dark-grey: #00171F;
+  --dark-blue: #003459;
+  --blue: #007EA7;
+  --light-blue: #00A8E8;
+}
+
+body {
+  background-color: var(--dark-grey);
+  height: 100vh;
+  font-size: 12px;
+}
+
+#main-container {
+  height: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+#grid-container {
+  width: 90vw;
+  height: 90vw;
+  max-width: 400px;
+  max-height: 400px;
+  display: grid;
+  grid-template-rows: repeat(3, 1fr);
+  grid-template-columns: repeat(3, 1fr);
+}
+
+.cell {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  color: white;
+  border: 2px solid var(--light-blue);
+}
+
+.cell span {
+  font-size: 7em;
+}
+
+.cell-top {
+  border-top: 0;
+}
+
+.cell-bottom {
+  border-bottom: 0;
+}
+
+.cell-left {
+  border-left: 0;
+}
+
+.cell-right {
+  border-right: 0;
+}
