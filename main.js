@@ -125,6 +125,9 @@ const game = (() => {
 
 const ui = (() => { 
   const cells = document.querySelectorAll('.cell');
+  const buttons = document.querySelectorAll('.buttons');
+
+  let nPlayers = 0;
 
   const paintSquares = cells => {
     for (let i=0; i<3; i++){
@@ -146,15 +149,21 @@ const ui = (() => {
       alert('tie');
       return true;
     }else{
-      game.changeTurn();
       return false;
     }
   }
 
   const p1Play = (cell) => {
     play (cell);
-    if (!isOver ()){
+    console.log(nPlayers);
+    if (!isOver () && nPlayers === 1){
+      game.changeTurn();
       aiPlay();
+      if (!isOver ()){
+        game.changeTurn ();
+      }
+    }else if (!isOver () && nPlayers === 2){
+      game.changeTurn ()
     }
   }
 
@@ -162,7 +171,6 @@ const ui = (() => {
     let move = game.minMax(game.players[1], game.board);
     const cell = document.querySelector(`.cell[data-square="${move.index}"]`);
     play(cell);
-    game.changeTurn();
   }
 
   const play = cell =>  {
@@ -177,13 +185,28 @@ const ui = (() => {
   cells.forEach (cell => { 
     const cellNumber = cell.getAttribute('data-square');
     cell.addEventListener('click', () => {
-      if (!game.isSet(cellNumber) && !checkWinner()){
+      if (!game.isSet(cellNumber) && !checkWinner() && nPlayers > 0){
         p1Play(cell);
+      }
+    });
+  });
+
+  buttons.forEach (button => {
+    button.addEventListener('click', () => {
+      if (button.value === 'sp'){
+        nPlayers = 1;
+        console.log(nPlayers);
+      }else if (button.value === 'mp'){
+        nPlayers = 2;
+        console.log(nPlayers);
       }
     });
   });
 })();
 
+
+
+// temp testing data
 player1 = playerFactory (1, 'Andre', 'X');
 player2 = playerFactory (2, 'Raskol', 'O');
 
