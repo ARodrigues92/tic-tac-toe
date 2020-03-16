@@ -1,6 +1,6 @@
 const playerFactory = (id, name, mark) => {
-  let playerScore = 0;
-  return {id ,name, mark, playerScore};
+  let score = 0;
+  return {id ,name, mark, score};
 }
 
 const game = (() => {
@@ -128,13 +128,21 @@ const ui = (() => {
   const buttons = document.querySelectorAll('.buttons');
   const nPlayersContainer = document.getElementById('n-player-selection');
   const namesFormContainer = document.getElementById('names-input');
+  const resultsContainer = document.getElementById('results-container');
+  const scoresDisplay = document.getElementById('scores');
+  const turnDisplay = document.getElementById('current-player');
+  const winnerDisplay = document.getElementById('winner');
 
   let nPlayers = 0;
 
-  const paintSquares = cells => {
-    for (let i=0; i<3; i++){
+  const paintSquares = (result, cells) => {
+    for (let i = 0; i < cells.length; i++){
       let wCell = document.querySelector(`.cell[data-square="${cells[i]}"]`);
-      wCell.style.backgroundColor = ('green');
+      if (result === 'win'){
+        wCell.style.backgroundColor = ('green');
+      }else if (result === 'tie'){
+        wCell.style.backgroundColor = ('orange');
+      }
     }
   }
 
@@ -143,12 +151,27 @@ const ui = (() => {
     return (game.isWinner(currentPlayer, game.board));
   }
 
+  const renderScores = winner => {
+    const p1 = game.players[0];
+    const p2 = game.players[1];
+    if (winner === 'tie'){
+      winnerDisplay.innerText = "It's a tie";
+    }else{
+      winnerDisplay.innerText = winner + ' Wins';
+    }
+    winnerDisplay.classList.remove('display-none');
+    scoresDisplay.innerText = `${p1.name} ${p1.score}:${p2.score} ${p2.name}`;
+  }
+
   const isOver = () => {
     if (checkWinner ()){
-      paintSquares(checkWinner().combo);
+      paintSquares('win', checkWinner().combo);
+      game.getCurrentPlayer().score++;
+      renderScores (game.getCurrentPlayer().name);
       return true;
     }else if (game.isTie()){
-      alert('tie');
+      paintSquares('tie', '012345678');
+      renderScores ('tie');
       return true;
     }else{
       return false;
@@ -157,14 +180,19 @@ const ui = (() => {
 
   const p1Play = (cell) => {
     play (cell);
-    if (!isOver () && nPlayers === 1){
-      game.changeTurn();
-      aiPlay();
+    if(nPlayers === 1){
+      if (!isOver ()){
+        game.changeTurn();
+        aiPlay();
+        if (!isOver ()){
+          game.changeTurn ();
+        }
+      }
+    }else if (nPlayers === 2){
       if (!isOver ()){
         game.changeTurn ();
+        turnDisplay.innerText = `${game.getCurrentPlayer().name}'s Turn`;
       }
-    }else if (!isOver () && nPlayers === 2){
-      game.changeTurn ()
     }
   }
 
@@ -198,13 +226,20 @@ const ui = (() => {
   const start = function () {
     const form = document.querySelector('form');
     createPlayers(form);
+    const p1 = game.players[0];
+    const p2 = game.players[1];
+    const currentPlayer = game.getCurrentPlayer().name;
+    scoresDisplay.innerText = `${p1.name} ${p1.score}:${p2.score} ${p2.name}`;
+    turnDisplay.innerText = `${currentPlayer}'s Turn`; 
   }
 
   cells.forEach (cell => { 
     const cellNumber = cell.getAttribute('data-square');
     cell.addEventListener('click', () => {
-      if (!game.isSet(cellNumber) && !checkWinner() && nPlayers > 0){
-        p1Play(cell);
+      if(game.players.length === 2 && !game.isSet(cellNumber)){
+        if (!checkWinner()){
+          p1Play(cell);
+        }
       }
     });
   });
@@ -221,6 +256,8 @@ const ui = (() => {
         namesFormContainer.classList.remove('display-none');
       }else if (button.value === 'start'){
         e.preventDefault();
+        namesFormContainer.classList.add('display-none');
+        resultsContainer.classList.remove('display-none');
         start();
       }
     });
