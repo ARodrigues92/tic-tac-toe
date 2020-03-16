@@ -126,6 +126,8 @@ const game = (() => {
 const ui = (() => { 
   const cells = document.querySelectorAll('.cell');
   const buttons = document.querySelectorAll('.buttons');
+  const nPlayersContainer = document.getElementById('n-player-selection');
+  const namesFormContainer = document.getElementById('names-input');
 
   let nPlayers = 0;
 
@@ -155,7 +157,6 @@ const ui = (() => {
 
   const p1Play = (cell) => {
     play (cell);
-    console.log(nPlayers);
     if (!isOver () && nPlayers === 1){
       game.changeTurn();
       aiPlay();
@@ -182,6 +183,23 @@ const ui = (() => {
     game.setMark (currentPlayer, cellNumber);
   }
 
+  const createPlayers = data => {
+    const players = [];
+    for (let element of data.elements){
+      if (element.id === 'player1'){
+        players[0] = (playerFactory(1, element.value || 'Player1', 'X'));
+      }else if (element.id === 'player2'){
+        players[1] = (playerFactory(2, element.value || 'Raskolnikov AI', 'O'));
+      }
+    }
+    game.addPlayers(...players);
+  }
+
+  const start = function () {
+    const form = document.querySelector('form');
+    createPlayers(form);
+  }
+
   cells.forEach (cell => { 
     const cellNumber = cell.getAttribute('data-square');
     cell.addEventListener('click', () => {
@@ -192,22 +210,19 @@ const ui = (() => {
   });
 
   buttons.forEach (button => {
-    button.addEventListener('click', () => {
+    button.addEventListener('click', (e) => {
       if (button.value === 'sp'){
         nPlayers = 1;
-        console.log(nPlayers);
+        nPlayersContainer.classList.add('display-none');
+        namesFormContainer.classList.remove('display-none');
       }else if (button.value === 'mp'){
         nPlayers = 2;
-        console.log(nPlayers);
+        nPlayersContainer.classList.add('display-none');
+        namesFormContainer.classList.remove('display-none');
+      }else if (button.value === 'start'){
+        e.preventDefault();
+        start();
       }
     });
   });
 })();
-
-
-
-// temp testing data
-player1 = playerFactory (1, 'Andre', 'X');
-player2 = playerFactory (2, 'Raskol', 'O');
-
-game.addPlayers(player1, player2);

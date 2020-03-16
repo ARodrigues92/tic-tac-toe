@@ -13,6 +13,21 @@
         <button class="buttons" type="button" value="sp">Singleplayer</button>
         <button class="buttons" type="button" value="mp">Multiplayer</button>
       </div>
+      <div id="names-input" class="controls display-none">
+        <form>
+          <div id="player1-container" class="name-input-container">
+            <label for="player1">Player1</label>
+            <input type="text" id="player1" class="name-input" name="player1" placeholder="Player's name">
+          </div>
+          <div id="player2-container" class="name-input-container">
+            <label for="player2">Player2</label>
+            <input type="text" id="player2" class="name-input" name="player2" placeholder="Player's name">
+          </div>
+          <div id="submit-container">
+            <button class="buttons" type="submit" value="start">Start Game</button>
+          </div>
+        </form>
+      </div>
       <div id="grid-container">
         <div class="cell cell-top cell-left" data-square="0"></div>
         <div class="cell cell-top" data-square="1"></div>
