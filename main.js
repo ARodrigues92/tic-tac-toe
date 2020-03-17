@@ -281,10 +281,12 @@ const ui = (() => {
   cells.forEach (cell => { 
     const cellNumber = cell.getAttribute('data-square');
     cell.addEventListener('click', () => {
-      if(startGame && !game.isSet(cellNumber)){
-        if (!checkWinner()){
+      if(startGame){
+        if (!checkWinner() && !game.isSet(cellNumber)){
           p1Play(cell);
         }
+      }else{
+        alert("Insert players first");
       }
     });
   });
