@@ -131,6 +131,7 @@ const ui = (() => {
   const buttons = document.querySelectorAll('.buttons');
   const nPlayersContainer = document.getElementById('n-player-selection');
   const namesFormContainer = document.getElementById('names-input');
+  const p2Input = document.getElementById('player2-container');
   const resultsContainer = document.getElementById('results-container');
   const scoresDisplay = document.getElementById('scores');
   const turnDisplay = document.getElementById('current-player');
@@ -145,6 +146,7 @@ const ui = (() => {
     resultsContainer.classList.add('display-none');
     nPlayersContainer.classList.remove('display-none');
     restartButton.classList.add('display-none');
+    p2Input.classList.remove('display-none');
     startGame = false;
     restartGame();
   }
@@ -247,7 +249,11 @@ const ui = (() => {
       if (element.id === 'player1'){
         players[0] = (playerFactory(1, element.value || 'Player1', 'X'));
       }else if (element.id === 'player2'){
-        players[1] = (playerFactory(2, element.value || 'Raskolnikov AI', 'O'));
+        if (nPlayers === 1){
+          players[1] = (playerFactory(2, element.value || 'Computer', 'O'));
+        }else{
+          players[1] = (playerFactory(2, element.value || 'Player2', 'O'));
+        }
       }
     }
     game.addPlayers(...players);
@@ -282,6 +288,7 @@ const ui = (() => {
         nPlayersContainer.classList.add('display-none');
         namesFormContainer.classList.remove('display-none');
         resetButton.classList.remove('display-none');
+        p2Input.classList.add('display-none');
       }else if (button.value === 'mp'){
         nPlayers = 2;
         nPlayersContainer.classList.add('display-none');
