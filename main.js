@@ -4,13 +4,14 @@ const playerFactory = (id, name, mark) => {
 }
 
 const game = (() => {
-  const board = [0,1,2,3,4,5,6,7,8];
+  const board = [0, 1, 2, 3, 4, 5, 6, 7, 8];
   const players = [];
   let playerTurn = 0;
 
   return{
     addPlayers : function (p1, p2) {
-      players.push (p1, p2);
+      players[0] = p1;
+      players[1] = p2;
     },
     getCurrentPlayer : function () {
       return players[playerTurn];
@@ -24,8 +25,11 @@ const game = (() => {
     isSet : function (position) {
       return typeof board[position] === 'number' ? false : true;
     },
-    clearBoard : function () {
-      board.splice(0, board.length);
+    restartGame : function () {
+      for (let i = 0; i < 9; i++){
+        board[i] = i;
+      }
+      playerTurn = 0;
     },
     getAvailSquares : function () {
       const availSquares = [];
@@ -122,7 +126,6 @@ const game = (() => {
   }
 })();
 
-
 const ui = (() => { 
   const cells = document.querySelectorAll('.cell');
   const buttons = document.querySelectorAll('.buttons');
@@ -132,8 +135,33 @@ const ui = (() => {
   const scoresDisplay = document.getElementById('scores');
   const turnDisplay = document.getElementById('current-player');
   const winnerDisplay = document.getElementById('winner');
+  const restartButton = document.getElementById('restart');
+  const resetButton = document.getElementById('reset');
 
   let nPlayers = 0;
+  let startGame = false;
+
+  const reset = () => {
+    resultsContainer.classList.add('display-none');
+    nPlayersContainer.classList.remove('display-none');
+    restartButton.classList.add('display-none');
+    startGame = false;
+    restartGame();
+  }
+
+  const restartGame = () => {
+    winnerDisplay.classList.add('display-none');
+    restartButton.classList.add('display-none');
+    game.restartGame();
+    clearBoard ();
+  }
+
+  const clearBoard = () => {
+    cells.forEach (cell => {
+      cell.innerHTML = '';
+      cell.style.backgroundColor = 'var(--dark-grey)';
+    });
+  }
 
   const paintSquares = (result, cells) => {
     for (let i = 0; i < cells.length; i++){
@@ -168,10 +196,12 @@ const ui = (() => {
       paintSquares('win', checkWinner().combo);
       game.getCurrentPlayer().score++;
       renderScores (game.getCurrentPlayer().name);
+      restartButton.classList.remove('display-none');
       return true;
     }else if (game.isTie()){
       paintSquares('tie', '012345678');
       renderScores ('tie');
+      restartButton.classList.remove('display-none');
       return true;
     }else{
       return false;
@@ -230,13 +260,14 @@ const ui = (() => {
     const p2 = game.players[1];
     const currentPlayer = game.getCurrentPlayer().name;
     scoresDisplay.innerText = `${p1.name} ${p1.score}:${p2.score} ${p2.name}`;
-    turnDisplay.innerText = `${currentPlayer}'s Turn`; 
+    turnDisplay.innerText = `${currentPlayer}'s Turn`;
+    startGame = true;
   }
 
   cells.forEach (cell => { 
     const cellNumber = cell.getAttribute('data-square');
     cell.addEventListener('click', () => {
-      if(game.players.length === 2 && !game.isSet(cellNumber)){
+      if(startGame && !game.isSet(cellNumber)){
         if (!checkWinner()){
           p1Play(cell);
         }
@@ -250,15 +281,21 @@ const ui = (() => {
         nPlayers = 1;
         nPlayersContainer.classList.add('display-none');
         namesFormContainer.classList.remove('display-none');
+        resetButton.classList.remove('display-none');
       }else if (button.value === 'mp'){
         nPlayers = 2;
         nPlayersContainer.classList.add('display-none');
         namesFormContainer.classList.remove('display-none');
+        resetButton.classList.remove('display-none');
       }else if (button.value === 'start'){
         e.preventDefault();
         namesFormContainer.classList.add('display-none');
         resultsContainer.classList.remove('display-none');
         start();
+      }else if (button.value === 'restart'){
+        restartGame();
+      }else if (button.value === 'reset'){
+        reset();
       }
     });
   });

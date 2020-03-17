@@ -20,7 +20,7 @@ body {
 }
 
 .controls {
-  height: 150px;
+  height: 200px;
   display: flex;
   flex-direction: column;
   justify-content: space-evenly;
