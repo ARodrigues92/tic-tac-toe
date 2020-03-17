@@ -142,18 +142,26 @@ const ui = (() => {
   let nPlayers = 0;
   let startGame = false;
 
+  const hide = element => {
+    element.classList.add('display-none');
+  }
+
+  const show = element => {
+    element.classList.remove('display-none');
+  }
+
   const reset = () => {
-    resultsContainer.classList.add('display-none');
-    nPlayersContainer.classList.remove('display-none');
-    restartButton.classList.add('display-none');
-    p2Input.classList.remove('display-none');
+    hide (resultsContainer);
+    hide (restartButton);
+    show (nPlayersContainer);
+    show (p2Input);
     startGame = false;
     restartGame();
   }
 
   const restartGame = () => {
-    winnerDisplay.classList.add('display-none');
-    restartButton.classList.add('display-none');
+    hide(winnerDisplay);
+    hide(restartButton);
     game.restartGame();
     clearBoard ();
   }
@@ -198,12 +206,12 @@ const ui = (() => {
       paintSquares('win', checkWinner().combo);
       game.getCurrentPlayer().score++;
       renderScores (game.getCurrentPlayer().name);
-      restartButton.classList.remove('display-none');
+      show (restartButton);
       return true;
     }else if (game.isTie()){
       paintSquares('tie', '012345678');
       renderScores ('tie');
-      restartButton.classList.remove('display-none');
+      show (restartButton);
       return true;
     }else{
       return false;
@@ -285,19 +293,19 @@ const ui = (() => {
     button.addEventListener('click', (e) => {
       if (button.value === 'sp'){
         nPlayers = 1;
-        nPlayersContainer.classList.add('display-none');
-        namesFormContainer.classList.remove('display-none');
-        resetButton.classList.remove('display-none');
-        p2Input.classList.add('display-none');
+        hide(nPlayersContainer);
+        hide(p2Input);
+        show(namesFormContainer);
+        show(resetButton);
       }else if (button.value === 'mp'){
         nPlayers = 2;
-        nPlayersContainer.classList.add('display-none');
-        namesFormContainer.classList.remove('display-none');
-        resetButton.classList.remove('display-none');
+        hide(nPlayersContainer);
+        show(namesFormContainer);
+        show(resetButton);
       }else if (button.value === 'start'){
         e.preventDefault();
-        namesFormContainer.classList.add('display-none');
-        resultsContainer.classList.remove('display-none');
+        hide(namesFormContainer);
+        show(resultsContainer);
         start();
       }else if (button.value === 'restart'){
         restartGame();
